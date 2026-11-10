@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\AdminController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -17,20 +19,16 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // Rutas para Administrador
-Route::get('/admin/dashboard', function () {
-    if(auth()->user()->email !== 'admin@admin.com') {
-        abort(403, 'ACCESO DENEGADO: Solo para Administradores');
-    }
-    return view('admin.dashboard');
-})->middleware(['auth', 'verified'])->name('admin.dashboard');
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+});
 
 // Rutas para Cliente
-Route::get('/cliente/dashboard', function () {
-    if(auth()->user()->email === 'admin@admin.com') {
-         abort(403, 'ACCESO DENEGADO: Solo para Clientes');
-    }
-    return view('cliente.dashboard');
-})->middleware(['auth', 'verified'])->name('cliente.dashboard');
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/cliente/dashboard', [ClienteController::class, 'index'])->name('cliente.dashboard');
+    Route::post('/cliente/reservas', [ClienteController::class, 'storeReserva'])->name('cliente.reservas.store');
+    Route::delete('/cliente/reservas/{id}', [ClienteController::class, 'cancelReserva'])->name('cliente.reservas.destroy');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
