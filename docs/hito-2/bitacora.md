@@ -1,0 +1,1 @@
+| 12/11/2026 | Corrección frontend y documentación Hito 2 | 2 horas | Fallo en Alpine.js con bucles Blade. Solución: Implementación de modal nativo con estado local x-data. |
