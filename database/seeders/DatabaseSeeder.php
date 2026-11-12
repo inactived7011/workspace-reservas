@@ -22,5 +22,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'cliente@cliente.com',
             'password' => bcrypt('password123'),
         ]);
+        $this->call(EspacioSeeder::class);
     }
 }
+
