@@ -58,15 +58,62 @@
                                 <h4 class="font-bold text-[#075985] text-lg">{{ $espacio->nombre }}</h4>
                                 <p class="text-sm text-gray-600 mb-2">{{ $espacio->tipo }} - {{ $espacio->ubicacion }}</p>
                                 <p class="text-gray-800 mb-4">{{ $espacio->descripcion }}</p>
-                                <div class="flex justify-between items-center">
+                                <div class="flex justify-between items-center mb-4">
                                     <span class="font-bold text-green-600">S/ {{ number_format($espacio->precio_hora, 2) }} / hr</span>
                                     <span class="text-xs bg-blue-100 text-blue-800 py-1 px-2 rounded">Cap: {{ $espacio->capacidad }} pax</span>
                                 </div>
                                 
-                                <!-- Botón para abrir modal de reserva (Implementaremos el modal luego) -->
-                                <button class="mt-4 w-full bg-[#0284c7] hover:bg-[#075985] text-white font-bold py-2 px-4 rounded text-sm">
-                                    Reservar Ahora
-                                </button>
+                                <!-- Botón y Modal Nativo de Alpine -->
+                                <div x-data="{ open: {{ ($errors->any() && old('espacio_id') == $espacio->id) ? 'true' : 'false' }} }">
+                                    
+                                    <button @click.prevent="open = true" class="w-full bg-[#0284c7] hover:bg-[#075985] text-white font-bold py-2 px-4 rounded text-sm mt-2">
+                                        Reservar Ahora
+                                    </button>
+
+                                    <!-- Ventana Modal -->
+                                    <div x-show="open" style="display: none;" class="fixed inset-0 z-50 overflow-y-auto">
+                                        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+                                            <div x-show="open" @click="open = false" class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75"></div>
+
+                                            <div x-show="open" class="relative inline-block w-full max-w-lg p-6 overflow-hidden text-left align-middle transition-all transform bg-white rounded-lg shadow-xl sm:my-8">
+                                                <form method="POST" action="{{ route('cliente.reservas.store') }}">
+                                                    @csrf
+                                                    <input type="hidden" name="espacio_id" value="{{ $espacio->id }}">
+
+                                                    <h2 class="mb-4 text-lg font-medium text-gray-900">
+                                                        Reservar: {{ $espacio->nombre }}
+                                                    </h2>
+
+                                                    <div class="mb-4">
+                                                        <label for="fecha_{{ $espacio->id }}" class="block text-sm font-medium text-gray-700">Fecha de Reserva</label>
+                                                        <input type="date" id="fecha_{{ $espacio->id }}" name="fecha" value="{{ old('fecha') }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                                                    </div>
+
+                                                    <div class="grid grid-cols-2 gap-4 mb-6">
+                                                        <div>
+                                                            <label for="hora_inicio_{{ $espacio->id }}" class="block text-sm font-medium text-gray-700">Hora Inicio (Ej: 09:00)</label>
+                                                            <input type="time" id="hora_inicio_{{ $espacio->id }}" name="hora_inicio" value="{{ old('hora_inicio') }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                                                        </div>
+                                                        <div>
+                                                            <label for="hora_fin_{{ $espacio->id }}" class="block text-sm font-medium text-gray-700">Hora Fin (Ej: 13:00)</label>
+                                                            <input type="time" id="hora_fin_{{ $espacio->id }}" name="hora_fin" value="{{ old('hora_fin') }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="flex justify-end mt-6">
+                                                        <button type="button" @click="open = false" class="px-4 py-2 mr-3 text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                                                            Cancelar
+                                                        </button>
+                                                        <button type="submit" class="px-4 py-2 text-white bg-[#0284c7] rounded-md hover:bg-[#075985]">
+                                                            Confirmar Reserva
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
                         @empty
                             <div class="col-span-full text-center py-4 text-gray-500">
