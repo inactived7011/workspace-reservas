@@ -1,0 +1,7 @@
+# Anexo C: Registro de errores corregidos (Hito 3)
+
+| N.º | Error encontrado | Cómo se detectó | Causa y solución | Commit |
+| :---: | :--- | :--- | :--- | :--- |
+| 1 | **Fallo de Alpine.js en bucles Blade** | Al hacer clic en los botones de "Reservar Ahora", el modal no se desplegaba. | **Causa:** El componente genérico `<x-modal>` colisionaba con la variable del bucle `@forelse`.<br>**Solución:** Se reemplazó por un componente nativo de Alpine usando un estado local booleano `x-data="{ open: false }"`. | `fix: modal nativo y reservas` |
+| 2 | **Error de sintaxis en Vite (bootstrap)** | Al levantar el entorno con `npm run dev`, apareció una pantalla roja de Vite. | **Causa:** Referencia rota al archivo `resources/js/bootstrap.js` que no existía en el directorio.<br>**Solución:** Se limpió la importación en `app.js` dejando exclusivamente la instancia limpia de Alpine.js. | `fix: corrige importacion app.js` |
+| 3 | **Excepción 500 en AdminController** | Al probar rutas protegidas de administración de forma preliminar. | **Causa:** El controlador carecía del método `index()` requerido por la ruta web.<br>**Solución:** Se implementó la estructura base del método retornando la vista correspondiente. | `feat: estructura admin dashboard` |
